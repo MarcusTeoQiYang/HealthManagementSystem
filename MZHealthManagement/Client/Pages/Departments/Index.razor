@@ -1,0 +1,72 @@
+﻿@page "/departments/"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+
+<h3 class="card-title">Department</h3>
+
+<a href="/departments/create" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Create New Departments
+</a>
+<br />
+<br />
+
+@if (Departments == null)
+{
+    <div class="alert alert-info">Loading Departments...</div>
+}
+else
+{
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var department in Departments)
+            {
+            <tr>
+                <td>@department.Name</td>
+                <td>@department.Location</td>
+                <td>
+                    <a href="/department/view/@department.Id" class="btn btn-primary">
+                        <span class="oi oi-book"></span>
+                    </a>
+                    <a href="/department/edit/@department.Id" class="btn btn-warning">
+                        <span class="oi oi-pencil"></span>
+                    </a>
+                    <button class="btn btn-danger" @onclick="@(()=>Delete(department.Id))">
+                        <span class="oi oi-delete"></span>
+                    </button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private List<Department> Departments;
+
+    protected async override Task OnInitializedAsync()
+    {
+        //Makes = await _client.GetFromJsonAsync<List<Make>>($"{Endpoints.MakesEndpoint}");
+        Departments = await _client.GetFromJsonAsync<List<Department>>("api/departments");
+    }
+
+    async Task Delete(int departmentId)
+    {
+        var department = Departments.First(q => q.Id == departmentId);
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {department.Name}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"api/departments/{departmentId}");
+            //await _client.DeleteAsync($"{Endpoints.MakesEndpoint}/{makeId}");
+            await OnInitializedAsync();
+        }
+    }
+}

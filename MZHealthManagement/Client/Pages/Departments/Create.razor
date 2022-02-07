@@ -1,0 +1,21 @@
+﻿@page "/departments/create/"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3 class="card-title">Create New Department</h3>
+<hr />
+<br />
+
+
+
+<FormComponent ButtonText="Create Department" department="department" OnValidSubmit="@CreateDepartment" />
+
+@code {
+    Department department = new Department();
+
+    private async Task CreateDepartment()
+    {
+        await _client.PostAsJsonAsync("api/departments", department);
+        _navManager.NavigateTo("/departments/");
+    }
+}
