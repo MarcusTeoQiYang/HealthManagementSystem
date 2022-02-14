@@ -3,41 +3,38 @@
 @inject IJSRuntime js
 @attribute [Authorize]
 
-<h3 class="card-title">Book Appointments</h3>
+<h3 class="card-title">Appointment</h3>
 
 <a href="/appointments/create" class="btn btn-secondary">
     <span class="oi oi-plus"></span>
-    Create Appointments
+    Add New Appointments
 </a>
 <br />
 <br />
 
 @if (Appointments == null)
 {
-    <div class="alert alert-info">Loading ...</div>
+    <div class="alert alert-info">Loading Appointments...</div>
 }
 else
 {
     <table class="table table-responsive">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>PhoneNo</th>
-                <th>Gender</th>
-                <th>Address</th>
-                <th>Weight</th>
-                <th>Actions</th>
+                <th>AppointmentId</th>
+                <th>Staff Name</th>
+                <th>Location</th>
+                <th>Patient Name</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var appointment in Appointments)
             {
                 <tr>
-                    <th>AppointmentId</th>
-                    <th>Location</th>
-                    <th>PatientId</th>
-                    <th>patient.Name</th>
-
+                    <td>@appointment.Id</td>
+                    <td>@appointment.Staff.Name</td>
+                    <td>@appointment.Location</td>
+                    <td>@appointment.Patient.Name</td>
                     <td>
                         <a href="/appointments/view/@appointment.Id" class="btn btn-primary">
                             <span class="oi oi-book"></span>
@@ -61,17 +58,16 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        Appointments = await _client.GetFromJsonAsync<List<Appointment>>("api/appointments");
+        Appointments = await _client.GetFromJsonAsync<List<Appointment>>("api/Appointments");
     }
 
-    async Task Delete(int appointmentId)
+    async Task Delete(int AppointmentId)
     {
-        var appointment = Appointments.First(q => q.Id == appointmentId);
+        var appointment = Appointments.First(q => q.Id == AppointmentId);
         var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {appointment.Id}?");
         if (confirm)
         {
-            await _client.DeleteAsync($"api/appointments/{appointmentId}");
-
+            await _client.DeleteAsync($"api/Appointments/{AppointmentId}");
             await OnInitializedAsync();
         }
     }

@@ -1,0 +1,74 @@
+﻿@page "/diagnosis/"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+
+<h3 class="card-title">Diagnosis</h3>
+
+<a href="/diagnosis/create" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Add New Diagnosis
+</a>
+<br />
+<br />
+
+@if (Diagnosis == null)
+{
+    <div class="alert alert-info">Loading Diagnosis...</div>
+}
+else
+{
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>DiagnosticId</th>
+                <th>AppointmentId</th>
+                <th>Symptoms</th>
+                <th>Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var diagnosis in Diagnosis)
+            {
+            <tr>
+                <td>@diagnosis.Id</td>
+                <td>@diagnosis.Appointment.Id</td>
+                <td>@diagnosis.Symptoms</td>
+                <td>@diagnosis.Cost</td>
+                <td>
+                    <a href="/diagnosis/view/@diagnosis.Id" class="btn btn-primary">
+                        <span class="oi oi-book"></span>
+                    </a>
+                    <a href="/diagnosis/edit/@diagnosis.Id" class="btn btn-warning">
+                        <span class="oi oi-pencil"></span>
+                    </a>
+                    <button class="btn btn-danger" @onclick="@(()=>Delete(diagnosis.Id))">
+                        <span class="oi oi-delete"></span>
+                    </button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private List<Diagnosis> Diagnosis;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Diagnosis = await _client.GetFromJsonAsync<List<Diagnosis>>("api/Diagnoses");
+    }
+
+    async Task Delete(int DiagnosisId)
+    {
+        var diagnosis = Diagnosis.First(q => q.Id == DiagnosisId);
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {diagnosis.Id}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"api/Diagnoses/{DiagnosisId}");
+            await OnInitializedAsync();
+        }
+    }
+}

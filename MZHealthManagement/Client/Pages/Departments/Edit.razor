@@ -1,0 +1,23 @@
+﻿@page "/departments/edit/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>Edit Department</h3>
+
+<FormComponent ButtonText="Update" OnValidSubmit="EditDepartment" department="department" />
+
+@code {
+    [Parameter] public int id { get; set; }
+    Department department = new Department();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        department = await _client.GetFromJsonAsync<Department>("api/departments/"+ id);
+    }
+
+    async Task EditDepartment()
+    {
+        await _client.PutAsJsonAsync("api/departments/" + id, department);
+        _navManager.NavigateTo("/departments/");
+    }
+}

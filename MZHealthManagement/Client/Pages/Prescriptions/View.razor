@@ -1,0 +1,16 @@
+﻿@page "/prescription/view/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>View</h3>
+
+<FormComponent prescription="prescription" Disabled="true" />
+
+@code {
+    [Parameter] public int id { get; set; }
+    Prescription prescription = new Prescription();
+    protected async override Task OnParametersSetAsync()
+    {
+        prescription = await _client.GetFromJsonAsync<Prescription>("api/Prescriptions/" + id);
+    }
+}

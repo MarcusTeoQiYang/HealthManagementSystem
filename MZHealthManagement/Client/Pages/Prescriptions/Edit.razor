@@ -1,0 +1,23 @@
+﻿@page "/prescription/edit/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>Edit Prescription</h3>
+
+<FormComponent ButtonText="Update" OnValidSubmit="EditPrescription" prescription="prescription" />
+
+@code {
+    [Parameter] public int id { get; set; }
+    Prescription prescription = new Prescription();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        prescription = await _client.GetFromJsonAsync<Prescription>("api/Prescriptions/" + id);
+    }
+
+    async Task EditPrescription()
+    {
+        await _client.PutAsJsonAsync("api/Prescriptions/" + id, prescription);
+        _navManager.NavigateTo("/prescription/");
+    }
+}

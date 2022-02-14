@@ -1,0 +1,64 @@
+﻿@inject HttpClient _client
+<EditForm Model="@diagnosis" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <fieldset disabled="@Disabled">
+
+        <div class=" form-group">
+            <label>AppointmentId: </label>
+            <div>
+                <InputSelect @bind-Value="diagnosis.AppointmentId" class="form-control">
+                    <option value="">-- Select Appointment --</option>
+                    @if (Appointments != null)
+                    {
+                        foreach (var appointment in Appointments)
+                        {
+                            <option value="@appointment.Id">
+                                @appointment.Location - @appointment.Staff.Name- @appointment.Patient.Name
+                            </option>
+                        }
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => diagnosis.AppointmentId)" />
+            </div>
+        </div>
+
+
+        <div class=" form-group">
+            <label>Symptoms: </label>
+            <div>
+                <InputText @bind-Value="@diagnosis.Symptoms" class="form-control" />
+                <ValidationMessage For="@(() => diagnosis.Symptoms)" />
+            </div>
+        </div>
+
+        <div class=" form-group">
+            <label>Cost: </label>
+            <div>
+                <InputNumber @bind-Value="@diagnosis.Cost" class="form-control" />
+                <ValidationMessage For="@(() => diagnosis.Cost)" />
+            </div>
+        </div>
+    </fieldset>
+    @if (!Disabled)
+    {
+        <button type="submit" class="btn btn-success btn-block">
+            @ButtonText
+        </button>}
+    <BackToList Target="diagnosis" />
+
+</EditForm>
+
+@code { [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public Diagnosis diagnosis { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    private IList<Appointment> Appointments;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Appointments = await _client.GetFromJsonAsync<List<Appointment>>("api/appointments");
+    }
+
+}

@@ -1,0 +1,66 @@
+﻿@inject HttpClient _client
+<EditForm Model="@prescription" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <fieldset disabled="@Disabled">
+        <div class=" form-group">
+            <label>Name: </label>
+            <div>
+                <InputText @bind-Value="@prescription.Name" class="form-control" />
+                <ValidationMessage For="@(() => prescription.Name)" />
+            </div>
+        </div>
+
+        <div class=" form-group">
+            <label>Quantity: </label>
+            <div>
+                <InputNumber @bind-Value="@prescription.Quantity" class="form-control" />
+                <ValidationMessage For="@(() => prescription.Quantity)" />
+            </div>
+        </div>
+        <div class=" form-group">
+            <label>Price: </label>
+            <div>
+                <InputNumber @bind-Value="@prescription.Price" class="form-control" />
+                <ValidationMessage For="@(() => prescription.Price)" />
+            </div>
+        </div>
+        <div class=" form-group">
+            <label>DiagnosticID: </label>
+            <div>
+                <InputSelect @bind-Value="prescription.DiagnosticID" class="form-control">
+                    <option value="">-- Select Diagnosis --</option>
+                    @if (Diagnosis != null)
+                    {
+                        foreach (var diagnosis in Diagnosis)
+                        {
+                            <option value="@diagnosis.Id">
+                                @diagnosis.Appointment.Id - @diagnosis.Cost- @diagnosis.Symptoms
+                            </option>
+                        }
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => prescription.DiagnosticID)" />
+            </div>
+        </div>
+    </fieldset>
+    @if (!Disabled)
+    {
+        <button type="submit" class="btn btn-success btn-block">
+            @ButtonText
+        </button>}
+    <BackToList Target="prescription" />
+
+</EditForm>
+
+@code { [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public Prescription prescription { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    private IList<Diagnosis> Diagnosis;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Diagnosis = await _client.GetFromJsonAsync<List<Diagnosis>>("api/Diagnoses");
+    }}

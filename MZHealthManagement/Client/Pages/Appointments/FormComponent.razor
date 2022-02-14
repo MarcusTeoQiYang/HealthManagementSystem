@@ -1,56 +1,60 @@
-﻿<EditForm Model="@appointment" OnValidSubmit="OnValidSubmit">
+﻿@inject HttpClient _client
+<EditForm Model="@appointment" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
+    <fieldset disabled="@Disabled">
 
-    <div class=" form-group">
-        <label>Location Name: </label>
-        <div>
-            <InputText @bind-Value="@appointment.Location" class="form-control" />
-            <ValidationMessage For="@(() => appointment.Location)" />
-        </div>
-    </div>
-    <div class="form-group">
-        <label>Staff: </label>
-        <div>
-            <InputSelect @bind-Value="appointment.StaffId" class="form-control">
-                <option value="">-- Select Staff --</option>
-                @if (Staffs != null)
-                {
-                    foreach (var staff in Staffs)
+        <div class=" form-group">
+            <label>StaffId: </label>
+            <div>
+                <InputSelect @bind-Value="appointment.StaffId" class="form-control">
+                    <option value="">-- Select Staff --</option>
+                    @if (Staffs != null)
                     {
-                        <option value="@staff.Id">
-                            @staff.Name - @staff.Position
-                        </option>
+                        foreach (var staff in Staffs)
+                        {
+                            <option value="@staff.Id">
+                                @staff.Name - @staff.PhoneNo
+                            </option>
+                        }
                     }
-                }
-            </InputSelect>
-            <ValidationMessage For="@(() => appointment.StaffId)" />
+                </InputSelect>
+                <ValidationMessage For="@(() => appointment.StaffId)" />
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label>Patient: </label>
-        <div>
-            <InputSelect @bind-Value="appointment.PatientId" class="form-control">
-                <option value="">-- Select Patient --</option>
-                @if (Patients != null)
-                {
-                    foreach (var patient in Patients)
+        <div class=" form-group">
+            <label>Location: </label>
+            <div>
+                <InputText @bind-Value="@appointment.Location" class="form-control" />
+                <ValidationMessage For="@(() => appointment.Location)" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label>PatientId: </label>
+            <div>
+                <InputSelect @bind-Value="appointment.PatientId" class="form-control">
+                    <option value="">-- Select Patient --</option>
+                    @if (Patients != null)
                     {
-                        <option value="@patient.Id">
-                            @patient.Name @patient.PhoneNo @patient.Gender - @patient.Weight
-                        </option>
+                        foreach (var patient in Patients)
+                        {
+                            <option value="@patient.Id">
+                                @patient.Name - @patient.PhoneNo
+                            </option>
+                        }
                     }
-                }
-            </InputSelect>
-            <ValidationMessage For="@(() => appointment.PatientId)" />
+                </InputSelect>
+                <ValidationMessage For="@(() => appointment.PatientId)" />
+            </div>
         </div>
-    </div>
+    </fieldset>
+    @if (!Disabled)
+    {
+        <button type="submit" class="btn btn-success btn-block">
+            @ButtonText
+        </button>}
+    <BackToList Target="appointments" />
 
-
-
-    <button type="submit" class="btn btn-success btn-block">
-        Create Appointment
-    </button>
 </EditForm>
 
 @code {
@@ -59,9 +63,14 @@
     [Parameter] public string ButtonText { get; set; } = "Save";
     [Parameter] public EventCallback OnValidSubmit { get; set; }
 
-    private IList<Patient> Patients;
     private IList<Staff> Staffs;
+    private IList<Patient> Patients;
 
+    protected async override Task OnInitializedAsync()
+    {
+        Staffs = await _client.GetFromJsonAsync<List<Staff>>("api/staffs");
+        Patients = await _client.GetFromJsonAsync<List<Patient>>("api/patients");
+    }
 
 
 }
