@@ -19,13 +19,11 @@
                         <span class="oi oi-person" aria-hidden="true"></span>  Hello, @context.User.Identity.Name!
                     </NavLink>
                 </li>
-                <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="#" @onclick="BeginSignOut"
-                             Match="NavLinkMatch.All">
-                        <span class="oi oi-account-logout" aria-hidden="true"></span>
-                        Log out
-                    </NavLink>
-                </li>
+                <NavLink class="nav-link" href="#" @onclick="BeginSignOut"
+                         Match="NavLinkMatch.All">
+                    <span class="oi oi-account-logout" aria-hidden="true"></span>
+                    Log out
+                </NavLink>
             </Authorized>
             <NotAuthorized>
                 <li class="nav-item px-3">
@@ -48,33 +46,28 @@
         </li>
 
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="staff" Match="NavLinkMatch.All">
-                <span class="oi oi-people" aria-hidden="true"></span> Staffs
+            <NavLink class="nav-link" href="staff">
+                <span class="oi oi-people" aria-hidden="true"></span> Staff
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="patients" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="patient">
                 <span class="oi oi-person" aria-hidden="true"></span> Patient
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="departments" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="departments">
                 <span class="oi oi-plus" aria-hidden="true"></span> Department
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="prescription" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="prescription">
                 <span class="oi oi-cart" aria-hidden="true"></span> Prescription
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="appointments" Match="NavLinkMatch.All">
-                <span class="oi oi-heart" aria-hidden="true"></span> Appointment
-            </NavLink>
-        </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="diagnosis" Match="NavLinkMatch.All">
-                <span class="oi oi-clipboard" aria-hidden="true"></span> Diagnosis
+            <NavLink class="nav-link" href="diagnosis">
+                <span class="oi oi-clipboard" aria-hidden="true"></span> xxx
             </NavLink>
         </li>
     </ul>

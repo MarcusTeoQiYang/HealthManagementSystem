@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,50 +13,53 @@ namespace MZHealthManagement.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StaffsController : ControllerBase
+    public class DiagnosesController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
-        public StaffsController(IUnitOfWork unitOfWork)
+        public DiagnosesController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
-        // GET: api/Staffs
-        [HttpGet]   
-        public async Task<IActionResult> GetStaffs()
+
+        // GET: api/Diagnoses
+        [HttpGet]
+        public async Task<ActionResult> GetDiagnosis()
         {
-            var staffs = await _unitOfWork.Staffs.GetAll(includes: q => q.Include(x => x.Department));
-            return Ok(staffs);
+            var diagnosis = await _unitOfWork.Diagnosis.GetAll(includes: q => q.Include(x => x.Appointment));
+            return Ok(diagnosis);
         }
 
-        // GET: api/Staffs/5
+        // GET: api/Diagnoses/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetStaff(int id)
+        public async Task<IActionResult> GetDiagnosis(int id)
         {
-            var staff = await _unitOfWork.Staffs.Get(q => q.Id == id);
-            if (staff == null)
+            var diagnosis = await _unitOfWork.Diagnosis.Get(q => q.Id == id);
+
+            if (diagnosis == null)
             {
                 return NotFound();
             }
-            return Ok(staff);
+
+            return Ok(diagnosis);
         }
 
-        // PUT: api/Staffs/5
+        // PUT: api/Diagnoses/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStaff(int id, Staff staff)
+        public async Task<IActionResult> PutDiagnosis(int id, Diagnosis diagnosis)
         {
-            if (id != staff.Id)
+            if (id != diagnosis.Id)
             {
                 return BadRequest();
             }
-            _unitOfWork.Staffs.Update(staff);
+            _unitOfWork.Diagnosis.Update(diagnosis);
             try
             {
                 await _unitOfWork.Save(HttpContext);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await StaffExists(id))
+                if (!await DiagnosisExists(id))
                 {
                     return NotFound();
                 }
@@ -69,36 +72,36 @@ namespace MZHealthManagement.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Staffs
+        // POST: api/Diagnoses
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Staff>> PostStaff(Staff staff)
+        public async Task<ActionResult<Diagnosis>> PostDiagnosis(Diagnosis diagnosis)
         {
-            await _unitOfWork.Staffs.Insert(staff);
+            await _unitOfWork.Diagnosis.Insert(diagnosis);
             await _unitOfWork.Save(HttpContext);
 
-            return CreatedAtAction("GetStaff", new { id = staff.Id }, staff);
+            return CreatedAtAction("GetDiagnosis", new { id = diagnosis.Id }, diagnosis);
         }
 
-        // DELETE: api/Staffs/5
+        // DELETE: api/Diagnoses/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStaff(int id)
+        public async Task<IActionResult> DeleteDiagnosis(int id)
         {
-            var staff = await _unitOfWork.Staffs.Get(q => q.Id == id);
-            if (staff == null)
+            var diagnosis = await _unitOfWork.Diagnosis.Get(q => q.Id == id);
+            if (diagnosis == null)
             {
                 return NotFound();
             }
-            await _unitOfWork.Staffs.Delete(id);
+            await _unitOfWork.Diagnosis.Delete(id);
             await _unitOfWork.Save(HttpContext);
-
 
             return NoContent();
         }
-        private async Task<bool> StaffExists(int id)
+
+             private async Task<bool> DiagnosisExists(int id)
         {
-            var staff = await _unitOfWork.Staffs.Get(q => q.Id == id);
-            return staff != null;
+            var diagnosis = await _unitOfWork.Diagnosis.Get(q => q.Id == id);
+            return diagnosis != null;
         }
     }
 }

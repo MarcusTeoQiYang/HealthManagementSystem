@@ -2,22 +2,20 @@
 @inject HttpClient _client
 @inject NavigationManager _navManager
 
-<h3 class="card-title">Book Appointment</h3>
+<h3 class="card-title">Create New Appointment</h3>
 <hr />
 <br />
 
 
 
-<FormComponent ButtonText="Book Appointment" Appointment="appointment" OnValidSubmit="@CreateAppointment" />
-
-
+<FormComponent ButtonText="Create Appointment" appointment="appointment" OnValidSubmit="@CreateAppointment" />
 
 @code {
     Appointment appointment = new Appointment();
 
     private async Task CreateAppointment()
     {
-        await _client.PostAsJsonAsync("api/appointments", appointment);
+        await _client.PostAsJsonAsync("api/Appointments", appointment);
         _navManager.NavigateTo("/appointments/");
     }
 }

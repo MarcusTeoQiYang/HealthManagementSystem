@@ -1,0 +1,16 @@
+﻿@page "/departments/view/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>View</h3>
+
+<FormComponent department="department" Disabled="true" />
+
+@code {
+        [Parameter] public int id { get; set; }
+        Department department = new Department();
+    protected async override Task OnParametersSetAsync()
+    {
+        department = await _client.GetFromJsonAsync<Department>("api/departments/"+ id);
+    }
+}

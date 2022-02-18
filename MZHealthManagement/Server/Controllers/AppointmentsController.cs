@@ -25,7 +25,7 @@ namespace MZHealthManagement.Server.Controllers
 
         // GET: api/Patients
         [HttpGet]
-        public async Task<IActionResult> GetAppointment()
+        public async Task<IActionResult> GetAppointments()
         {
             //return await _context.Patients.ToListAsync();
             var appointments = await _unitOfWork.Appointments.GetAll(includes: q => q.Include(x => x.Patient).Include(x => x.Staff));
@@ -88,7 +88,7 @@ namespace MZHealthManagement.Server.Controllers
             await _unitOfWork.Appointments.Insert(appointment);
             await _unitOfWork.Save(HttpContext);
 
-            return CreatedAtAction("GetPatient", new { id = appointment.Id }, appointment);
+            return CreatedAtAction("GetAppintment", new { id = appointment.Id }, appointment);
         }
 
         // DELETE: api/Patients/5
@@ -101,10 +101,6 @@ namespace MZHealthManagement.Server.Controllers
             {
                 return NotFound();
             }
-
-            //_context.Patients.Remove(patient);
-            //await _context.SaveChangesAsync();
-
             await _unitOfWork.Appointments.Delete(id);
             await _unitOfWork.Save(HttpContext);
 

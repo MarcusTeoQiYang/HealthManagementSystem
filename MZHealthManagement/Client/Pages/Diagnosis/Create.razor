@@ -1,0 +1,21 @@
+﻿@page "/diagnosis/create/"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3 class="card-title">Create New Diagnosis</h3>
+<hr />
+<br />
+
+
+
+<FormComponent ButtonText="Create Diagnosis" diagnosis="diagnosis" OnValidSubmit="@CreateDiagnosis" />
+
+@code {
+    Diagnosis diagnosis = new Diagnosis();
+
+    private async Task CreateDiagnosis()
+    {
+        await _client.PostAsJsonAsync("api/Diagnoses", diagnosis);
+        _navManager.NavigateTo("/diagnosis/");
+    }
+}

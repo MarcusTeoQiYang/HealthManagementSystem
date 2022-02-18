@@ -21,6 +21,7 @@ else
     <table class="table table-responsive">
         <thead>
             <tr>
+                <th>DepartmentId</th>
                 <th>Name</th>
                 <th>Location</th>
             </tr>
@@ -29,13 +30,14 @@ else
             @foreach (var department in Departments)
             {
             <tr>
+                <td>@department.Id</td>
                 <td>@department.Name</td>
                 <td>@department.Location</td>
                 <td>
-                    <a href="/department/view/@department.Id" class="btn btn-primary">
+                    <a href="/departments/view/@department.Id" class="btn btn-primary">
                         <span class="oi oi-book"></span>
                     </a>
-                    <a href="/department/edit/@department.Id" class="btn btn-warning">
+                    <a href="/departments/edit/@department.Id" class="btn btn-warning">
                         <span class="oi oi-pencil"></span>
                     </a>
                     <button class="btn btn-danger" @onclick="@(()=>Delete(department.Id))">
@@ -54,18 +56,16 @@ else
 
     protected async override Task OnInitializedAsync()
     {
-        //Makes = await _client.GetFromJsonAsync<List<Make>>($"{Endpoints.MakesEndpoint}");
         Departments = await _client.GetFromJsonAsync<List<Department>>("api/departments");
     }
 
     async Task Delete(int departmentId)
     {
         var department = Departments.First(q => q.Id == departmentId);
-        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {department.Name}?");
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {department.Id}?");
         if (confirm)
         {
             await _client.DeleteAsync($"api/departments/{departmentId}");
-            //await _client.DeleteAsync($"{Endpoints.MakesEndpoint}/{makeId}");
             await OnInitializedAsync();
         }
     }

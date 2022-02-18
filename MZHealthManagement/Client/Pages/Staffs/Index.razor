@@ -1,0 +1,76 @@
+﻿@page "/staff/"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+
+<h3 class="card-title">Staff</h3>
+
+<a href="/staff/create" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Add New Staffs
+</a>
+<br />
+<br />
+
+@if (Staffs == null)
+{
+    <div class="alert alert-info">Loading Staffs...</div>
+}
+else
+{
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>PhoneNo</th>
+                <th>Position</th>
+                <th>DepartmentId</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var staff in Staffs)
+            {
+            <tr>
+                <td>@staff.Name</td>
+                <td>@staff.Gender</td>
+                <td>@staff.PhoneNo</td>
+                <td>@staff.Position</td>
+                <td>@staff.DepartmentId</td>
+                <td>
+                    <a href="/staff/view/@staff.Id" class="btn btn-primary">
+                        <span class="oi oi-book"></span>
+                    </a>
+                    <a href="/staff/edit/@staff.Id" class="btn btn-warning">
+                        <span class="oi oi-pencil"></span>
+                    </a>
+                    <button class="btn btn-danger" @onclick="@(()=>Delete(staff.Id))">
+                        <span class="oi oi-delete"></span>
+                    </button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private List<Staff> Staffs;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Staffs = await _client.GetFromJsonAsync<List<Staff>>("api/Staffs");
+    }
+
+    async Task Delete(int staffId)
+    {
+        var staff = Staffs.First(q => q.Id == staffId);
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {staff.Name}?");
+        if (confirm)
+        {
+            await _client.DeleteAsync($"api/Staffs/{staffId}");
+            await OnInitializedAsync();
+        }
+    }
+}
